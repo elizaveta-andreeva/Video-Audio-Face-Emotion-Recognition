@@ -242,10 +242,13 @@ def predict(
                 break
             _get_prediction(best_hp=best_hyperparameters, img=frame, model=model, imshow=False, video_mode=True, verbose=verbose)
 
-            wait_time = round((1000 / fps_in) - (time.time() - init_time))
-            print("wait_time: ", wait_time)
-            cv2.waitKey(wait_time)
+            elapsed_time = (time.time() - init_time) * 1000
+            wait_time = max(1, frame_delay - int(elapsed_time))
 
+            print(f"Frame delay: {frame_delay} ms | Processing time: {elapsed_time:.2f} ms | Wait time: {wait_time} ms")
+
+            cv2.waitKey(wait_time)
+        cap.release()
         return None
     if webcam_mode:
         cap = cv2.VideoCapture(0)
