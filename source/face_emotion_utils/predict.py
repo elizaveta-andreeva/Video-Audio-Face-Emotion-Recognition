@@ -228,7 +228,7 @@ def predict(
     if verbose:
         print(f"Best hyperparameters, {best_hyperparameters}")
 
-    model = torch.load(model_save_path)
+    model = torch.load(model_save_path, map_location=config.device)
     model.to(config.device).eval()
 
     if video_mode:
