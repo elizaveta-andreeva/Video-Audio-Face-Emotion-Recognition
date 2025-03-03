@@ -235,6 +235,8 @@ def predict(
         cap = cv2.VideoCapture(image)
         fps_in = cap.get(cv2.CAP_PROP_FPS)
 
+        frame_delay = int(1000 / fps_in)
+
         while True:
             init_time = time.time()
             ret, frame = cap.read()
