@@ -69,3 +69,5 @@ GRAD_CAM_ON_VIDEO = False  # When video mode or webcam mode is on, this will dis
 ############################################################################################################
 # data filename label_schema:
 # <dataset_name>_<s.no>_<emotion_index>.wav
+
+TARGET_FPS = 30
