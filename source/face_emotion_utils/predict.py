@@ -194,6 +194,7 @@ def predict(
         imshow=face_config.SHOW_PRED_IMAGE,
         grad_cam=face_config.GRAD_CAM,
         grad_cam_on_video=face_config.GRAD_CAM_ON_VIDEO,
+        target_fps=face_config.TARGET_FPS
 ):
     """
     Predicts the emotion of the face in the image or video.
@@ -235,23 +236,27 @@ def predict(
         cap = cv2.VideoCapture(image)
         fps_in = cap.get(cv2.CAP_PROP_FPS)
 
-        frame_delay = int(1000 / fps_in)
+        print(f"FPS: {fps_in}")
+
+        frame_skip = int(fps_in // target_fps)
+
+        predicted_objs = []
 
         while True:
-            init_time = time.time()
+            for _ in range(frame_skip - 1):
+                cap.read()
+
             ret, frame = cap.read()
             if not ret:
                 break
-            _get_prediction(best_hp=best_hyperparameters, img=frame, model=model, imshow=False, video_mode=True, verbose=verbose)
 
-            elapsed_time = (time.time() - init_time) * 1000
-            wait_time = max(1, frame_delay - int(elapsed_time))
+            result = _get_prediction(best_hp=best_hyperparameters, img=frame, model=model, imshow=False, video_mode=True,
+                            verbose=verbose)
+            predicted_objs.append(result)
 
-            print(f"Frame delay: {frame_delay} ms | Processing time: {elapsed_time:.2f} ms | Wait time: {wait_time} ms")
-
-            cv2.waitKey(wait_time)
+            cv2.waitKey(500)
         cap.release()
-        return None
+        return predicted_objs
     if webcam_mode:
         cap = cv2.VideoCapture(0)
         while True:
